@@ -1,5 +1,3 @@
-document.addEventListener('contextmenu', event => event.preventDefault());
-
 let names;
 let snames;
 let printed = false;

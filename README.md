@@ -1,7 +1,14 @@
 # secret-santa :santa:
 
+## Background
 
-## Run
+A fun old project from hs orchestra (i know weird place but code is written from necessity or whateva 🙃). I origanally made it in C and then wanted to make one that could run in browser so, I then made it in JS. I have uploaded it as is, and have now started to edit it slightly to meet my current standard of how I think it should be written. This project was inspired by Dr. Hannah Fry's ["Fool-Proof Secret Santa"](https://www.youtube.com/watch?v=GhnCj7Fvqt0) on Numberphile; great video you should def check it out. Anyway that's all, just a bit o' fun. If you'd like to use it yourself I'll explain below how to run each version.
+
+## Run C version
+
+// TODO
+
+## Run JS version
 
 `secret-santa` reads from a JSON file: `roster.json` and formulates pairs of `participants` for the gift exchange. 
 Entering your name in the input field will reveal your unique partner. If you wanna spoil the surprise 😐 
@@ -102,7 +109,7 @@ A template JSON file is included in the repository. Make sure to keep the same/p
  </tr>
 </table>
 
-
+// TODO: finish formatting examples
 
 
 

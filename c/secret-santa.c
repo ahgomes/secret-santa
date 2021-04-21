@@ -23,7 +23,6 @@ bool is_pos_integer(char *input) {
     return true;
 }
 
-
 void display_usage(char *progname) {
     printf("usage: %s [-h] [-f <path>] [-s <seed>] [-l [path]]\n", progname);
     printf("  -f <path>  File to use for list of participants [default: 'roster.txt'].\n");
@@ -42,33 +41,60 @@ int main(int argc, char *argv[]) {
     unsigned int seed = 1;
     char *fpath = NULL, *lpath = NULL, *s_val = NULL;
 
-    while ((opt = getopt(argc, argv, ":l:f:s:h")) != -1) {
+    while ((opt = getopt(argc, argv, ":f:s:l:h")) != -1) {
         switch (opt) {
             case 'h':
                 display_usage(argv[0]);
                 return EXIT_SUCCESS;
             case 'l':
                 lflag = 1;
+                if (optarg[0] == '-') {
+                    optind--;
+                    break;
+                }
                 lpath = optarg;
                 break;
             case 'f':
+                if (optarg[0] == '-') {
+                    if (
+                        optarg[1] == 'l' ||
+                        optarg[1] == 'h' ||
+                        optarg[1] == 's'
+                    ) {
+                        fprintf(stderr, "%sError:%s Option '-%c' requires an argument.\n", RED, DEFAULT, optopt);
+                        return EXIT_FAILURE;
+                    }
+                    optind--;
+                    break;
+                }
                 fpath = optarg;
                 break;
             case 's':
+                if (optarg[0] == '-') {
+                    if (
+                        optarg[1] == 'l' ||
+                        optarg[1] == 'h' ||
+                        optarg[1] == 'f'
+                    ) {
+                        fprintf(stderr, "%sError:%s Option '-%c' requires an argument.\n", RED, DEFAULT, optopt);
+                        return EXIT_FAILURE;
+                    }
+                    optind--;
+                    break;
+                }
                 s_val = optarg;
                 break;
+            case ':' :
+                if (optopt == 'l') {
+                    lflag = 1;
+                    break;
+                }
+                fprintf(stderr, "%sError:%s Option '-%c' requires an argument.\n", RED, DEFAULT, optopt);
+                return EXIT_FAILURE;
             case '?':
                 fprintf(stderr, "%sError:%s Unknown option '-%c' received.\n", RED, DEFAULT, optopt);
                 return EXIT_FAILURE;
-            default:
-                if (optopt == 'l') break;
-                fprintf(stderr, "%sError:%s Option '-%c' requires an argument.\n", RED, DEFAULT, optopt);
-                return EXIT_FAILURE;
         }
-    }
-
-    if (lpath != NULL && lpath[0] == '-') {
-        fprintf(stderr, "%sWarning:%s '%s' is an irregular path for list file. [usage ex: 'list.txt'].\n", YELLLOW, DEFAULT, lpath);
     }
 
     if (s_val != NULL) {
@@ -92,7 +118,7 @@ int main(int argc, char *argv[]) {
     FILE *roster;
     if (fpath == NULL) fpath = "roster.txt";
     if ((roster = fopen(fpath, "r")) == NULL) {
-        fprintf(stderr, "%sError:%s Could not open '%s'. %s.\n", fpath, RED, DEFAULT, strerror(errno));
+        fprintf(stderr, "%sError:%s Could not open '%s'. %s.\n", RED, DEFAULT, fpath, strerror(errno));
         return EXIT_FAILURE;
     }
 
@@ -110,7 +136,7 @@ int main(int argc, char *argv[]) {
     fclose(roster);
 
     if ((roster = fopen(fpath, "r")) == NULL) {
-        fprintf(stderr, "%sError:%s Could not open '%s'. %s.\n", fpath, RED, DEFAULT, strerror(errno));
+        fprintf(stderr, "%sError:%s Could not open '%s'. %s.\n", RED, DEFAULT, fpath, strerror(errno));
         return EXIT_FAILURE;
     }
     char names[lines][50];

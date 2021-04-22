@@ -3,23 +3,20 @@ let snames;
 let printed = false;
 let type_count = 0;
 
-window.onload = function() {
-    readTextFile('roster.json');
+window.onload = main;
+
+async function main() {
+    await getRoster();
     select();
     printList();
 }
 
-function readTextFile(path) {
-    let file = new XMLHttpRequest();
-    file.overrideMimeType('application/json');
-    file.open('GET', path, false);
-    file.send();
-    if (file.status == 200) callback(file.responseText);
-
-}
-
-function callback(txt) {
-    names = JSON.parse(txt).participants;
+async function getRoster(path = 'roster.txt') {
+    const result = await fetch(path, {
+        cache: 'no-cache',
+    }).then(response => response.text())
+    .catch(error => console.log(error));
+    names = result.trim().split(/[\r\n]+/gm);
 }
 
 function Random() {
@@ -45,9 +42,9 @@ function Random() {
     }
 }
 
-function select() {
+function select(seed = 2) {
     let rand_object = new Random();
-    rand_object.srand(67654);
+    rand_object.srand(seed);
     let rand_num = Math.floor(rand_object.rand() * names.length);
     let iterations = Math.floor(rand_object.rand() * 100)
     for (let i = 0; i < iterations; i++) {
